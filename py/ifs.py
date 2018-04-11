@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import math
 import argparse
 
+# Applies an affine transformation and returns the result as a tuple.
 def applyIFSTransformation(a, b, c, d, e, f, x, y):
     coeffMatrix = np.array([[a, b], 
                             [c, d]])
@@ -11,6 +12,7 @@ def applyIFSTransformation(a, b, c, d, e, f, x, y):
     transformedParams = np.add(coeffMatrix.dot(paramMatr), additive)
     return (transformedParams[0][0], transformedParams[1][0])
     
+# The typical IFS producing the fern fractal as described by Williams 136.
 def barnsleyFernIFS(x, y):
     T1 = [
         (0.86, 0.03, -0.03, 0.86),
@@ -31,6 +33,8 @@ def barnsleyFernIFS(x, y):
     tranls = T2a[choice]
     return applyIFSTransformation(coeff[0], coeff[1], coeff[2], coeff[3], tranls[0], tranls[1], x, y)
 
+# The other typical IFS producing the classic Sierpinski Triangle as described by Larry Riddle at
+# 
 def sierpinskiTriangleIFS(x, y):
     T1 = [
         (0.5, 0, 0, 0.5),
@@ -49,50 +53,8 @@ def sierpinskiTriangleIFS(x, y):
     add = T2a[choice]
     return applyIFSTransformation(coeff[0], coeff[1], coeff[2], coeff[3], add[0], add[1], x, y)
 
-def sierpinskiTriangleMirrorIFS(x, y):
-    T1 = [
-        (0.5, 0, 0, 0.5),
-        (0.5, 0, 0, 0.5),
-        (0.5, 0, 0, 0.5),
-        (-0.5, 0, 0, -0.5),
-        (-0.5, 0, 0, -0.5),
-        (-0.5, 0, 0, -0.5)
-        ]
-    T2a = [
-        (0, 0),
-        (0.5, 0),
-        (0.25, 0.433),
-        (0, 0),
-        (-0.5, 0),
-        (-0.25, -0.433)
-        ]
-
-    P = [0.166, 0.166, 0.166, 0.166, 0.166, 0.17]
-    choice = np.random.choice(6, p = P)
-    coeff = T1[choice]
-    add = T2a[choice]
-    return applyIFSTransformation(coeff[0], coeff[1], coeff[2], coeff[3], add[0], add[1], x, y)
-
-def sierpinskiSquareIFS(x, y):
-    T1 = [
-        (0.5, 0, 0, 0.5),
-        (0.5, 0, 0, 0.5),
-        (0.5, 0, 0, 0.5),
-        (0.5, 0, 0, 0.5)
-        ]
-    T2a = [
-        (0, 0),
-        (0, 1),
-        (1, 1),
-        (1, 0)
-        ]
-
-    P = [0.25, 0.25, 0.25, 0.25]
-    choice = np.random.choice(len(T1), p = P)
-    coeff = T1[choice]
-    add = T2a[choice]
-    return applyIFSTransformation(coeff[0], coeff[1], coeff[2], coeff[3], add[0], add[1], x, y)
-
+# And IFS producing the Koch curve fractal as described by Larry Riddle at
+# http://ecademy.agnesscott.edu/~lriddle/ifs/kcurve/kcurve.htm
 def kochCurveIFS(x, y):
     T1 = [
         (0.33, 0, 0, 0.33),
@@ -113,6 +75,7 @@ def kochCurveIFS(x, y):
     add = T2a[choice]
     return applyIFSTransformation(coeff[0], coeff[1], coeff[2], coeff[3], add[0], add[1], x, y)
 
+# An IFS producing our Arrow fractal as described in our paper.
 def arrowIFS(x, y):
     T1 = [
         (0.75, 0, 0, 0.75),
@@ -131,6 +94,8 @@ def arrowIFS(x, y):
     add = T2a[choice]
     return applyIFSTransformation(coeff[0], coeff[1], coeff[2], coeff[3], add[0], add[1], x, y)
 
+# Unused attempt at making the binary tree IFS as described by Larry Riddle at 
+# http://ecademy.agnesscott.edu/~lriddle/ifs/pythagorean/symbinarytree.htm.
 def binTreeIFS(x, y, r, theta):
     T1 = [
         (r * math.cos(theta), r * -math.sin(theta), r * math.sin(theta), r * math.cos(theta)),
@@ -149,16 +114,13 @@ def binTreeIFS(x, y, r, theta):
     add = T2a[choice]
     return applyIFSTransformation(coeff[0], coeff[1], coeff[2], coeff[3], add[0], add[1], x, y)
 
+# Routine for plotting a given IFS for a given amount of rounds.
 def plotIFS(ifs, rounds):
     fun = None
     if ifs == 'fern':
         fun = barnsleyFernIFS
     elif ifs == 'triangle':
         fun = sierpinskiTriangleIFS
-    elif ifs == 'triangle2':
-        fun = sierpinskiTriangleMirrorIFS
-    elif ifs == 'square':
-        fun = sierpinskiSquareIFS
     elif ifs == 'koch':
         fun = kochCurveIFS
     elif ifs == 'arrow':
@@ -176,9 +138,10 @@ def plotIFS(ifs, rounds):
     try: plt.show()
     except: pass
 
+# Main function parses arguments and hands them off to `plotIFS`.
 def main():
     parser = argparse.ArgumentParser(description="Plot iterated function system (IFS).")
-    parser.add_argument('function', metavar='IFS', type=str, nargs=1, choices=['fern', 'triangle', 'triangle2', 'square', 'koch', 'arrow'],
+    parser.add_argument('function', metavar='IFS', type=str, nargs=1, choices=['fern', 'triangle', 'koch', 'arrow'],
                    help='the function to plot. options: {fern, triangle, square, koch, arrow}')
     parser.add_argument('--rounds', dest='R', type=int, default=20000,
                    help='the number of iterations to complete (default: 20000)')

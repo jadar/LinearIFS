@@ -88,7 +88,7 @@ def arrowIFS(x, y):
         (0.5, 0.5)
         ]
 
-    P = [0.33, 0.33, 0.34]
+    P = [0.66, 0.17, 0.17]
     choice = np.random.choice(len(T1), p = P)
     coeff = T1[choice]
     add = T2a[choice]

@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import math
-import argparse, sys
+import argparse
 
 def applyIFSTransformation(a, b, c, d, e, f, x, y):
     coeffMatrix = np.array([[a, b], 
@@ -45,6 +45,30 @@ def sierpinskiTriangleIFS(x, y):
 
     P = [0.33, 0.33, 0.34]
     choice = np.random.choice(3, p = P)
+    coeff = T1[choice]
+    add = T2a[choice]
+    return applyIFSTransformation(coeff[0], coeff[1], coeff[2], coeff[3], add[0], add[1], x, y)
+
+def sierpinskiTriangleMirrorIFS(x, y):
+    T1 = [
+        (0.5, 0, 0, 0.5),
+        (0.5, 0, 0, 0.5),
+        (0.5, 0, 0, 0.5),
+        (-0.5, 0, 0, -0.5),
+        (-0.5, 0, 0, -0.5),
+        (-0.5, 0, 0, -0.5)
+        ]
+    T2a = [
+        (0, 0),
+        (0.5, 0),
+        (0.25, 0.433),
+        (0, 0),
+        (-0.5, 0),
+        (-0.25, -0.433)
+        ]
+
+    P = [0.166, 0.166, 0.166, 0.166, 0.166, 0.17]
+    choice = np.random.choice(6, p = P)
     coeff = T1[choice]
     add = T2a[choice]
     return applyIFSTransformation(coeff[0], coeff[1], coeff[2], coeff[3], add[0], add[1], x, y)
@@ -131,6 +155,8 @@ def plotIFS(ifs, rounds):
         fun = barnsleyFernIFS
     elif ifs == 'triangle':
         fun = sierpinskiTriangleIFS
+    elif ifs == 'triangle2':
+        fun = sierpinskiTriangleMirrorIFS
     elif ifs == 'square':
         fun = sierpinskiSquareIFS
     elif ifs == 'koch':
@@ -152,8 +178,8 @@ def plotIFS(ifs, rounds):
 
 def main():
     parser = argparse.ArgumentParser(description="Plot iterated function system (IFS).")
-    parser.add_argument('function', metavar='IFS', type=str, nargs=1, choices=['fern', 'triangle', 'square', 'koch', 'arrow'],
-                   help='the function to plot')
+    parser.add_argument('function', metavar='IFS', type=str, nargs=1, choices=['fern', 'triangle', 'triangle2', 'square', 'koch', 'arrow'],
+                   help='the function to plot. options: {fern, triangle, square, koch, arrow}')
     parser.add_argument('--rounds', dest='R', type=int, default=20000,
                    help='the number of iterations to complete (default: 20000)')
     args = parser.parse_args()

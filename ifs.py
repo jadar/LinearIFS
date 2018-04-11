@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import math
+import argparse, sys
 
 def applyIFSTransformation(a, b, c, d, e, f, x, y):
     coeffMatrix = np.array([[a, b], 
@@ -124,19 +125,39 @@ def binTreeIFS(x, y, r, theta):
     add = T2a[choice]
     return applyIFSTransformation(coeff[0], coeff[1], coeff[2], coeff[3], add[0], add[1], x, y)
 
-x = 0
-y = 0
-
-fix, ax = plt.subplots()
-
-for i in range(1,20000):
-    x, y = arrowIFS(x, y)
-#     x, y = binTreeIFS(x, y, 0.7, 1.047)
-    plt.plot(x, y, 'r.', markersize=1, antialiased=False)
-
-plt.show()
+def plotIFS(ifs, rounds):
+    fun = None
+    if ifs == 'fern':
+        fun = barnsleyFernIFS
+    elif ifs == 'triangle':
+        fun = sierpinskiTriangleIFS
+    elif ifs == 'square':
+        fun = sierpinskiSquareIFS
+    elif ifs == 'koch':
+        fun = kochCurveIFS
+    elif ifs == 'arrow':
+        fun = arrowIFS
+    else: return
     
+    x = 0
+    y = 0
     
-# plt.plot(0, 0, 'b^')
-# plt.plot(0.5, 0, 'b^')
-# plt.plot(0.25, 0.25, 'b^')
+    for _ in range(0, rounds):
+        x, y = fun(x, y)
+    #     x, y = binTreeIFS(x, y, 0.7, 1.047)
+        plt.plot(x, y, 'r.', markersize=1, antialiased=False)
+    
+    try: plt.show()
+    except: pass
+
+def main():
+    parser = argparse.ArgumentParser(description="Plot iterated function system (IFS).")
+    parser.add_argument('function', metavar='IFS', type=str, nargs=1, choices=['fern', 'triangle', 'square', 'koch', 'arrow'],
+                   help='the function to plot')
+    parser.add_argument('--rounds', dest='R', type=int, default=20000,
+                   help='the number of iterations to complete (default: 20000)')
+    args = parser.parse_args()
+    plotIFS(args.function[0], args.R)
+    
+if __name__ == "__main__":
+    main()

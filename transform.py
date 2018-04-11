@@ -32,7 +32,7 @@ fix, ax = plt.subplots()
 rect = start_rect
 
 for i in range(0,reps):
-    rect = applyTransformation(rect, 0.5, 0, 0, 0.5, 0.5, 0.5)
+    rect = applyTransformation(rect, 0.86, 0.03, -0.03, 0.86, 0, 1.5)
     poly = patches.Polygon(rect, lw=2, fc='none')
     ax.add_patch(poly)
 
